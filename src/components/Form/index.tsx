@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import DatePicker from 'react-native-date-picker';
 import {Pacient} from '../../../App';
-import { formatDate } from '../../helpers/formatDate';
+import {formatDate} from '../../helpers/formatDate';
 
 export type FormProps = {
   isModalOpen: boolean;
@@ -108,7 +108,12 @@ const Form: FC<FormProps> = ({
             <Text style={styles.titlebold}>Appointment</Text>
           </Text>
 
-          <Pressable style={[isViewPacient ? styles.viewBtn : styles.btn, styles.btnCancel]} onLongPress={cleanState}>
+          <Pressable
+            style={[
+              isViewPacient ? styles.viewBtn : styles.btn,
+              styles.btnCancel,
+            ]}
+            onLongPress={cleanState}>
             <Text style={styles.btnCancelText}>Back</Text>
           </Pressable>
           {isViewPacient ? (
@@ -122,7 +127,9 @@ const Form: FC<FormProps> = ({
               <Text style={styles.viewLabel}>Phone</Text>
               <Text style={styles.viewLabelData}>{phone}</Text>
               <Text style={styles.viewLabel}>Discharge date</Text>
-              <Text style={styles.viewLabelData}>{formatDate({dateValue: date})}</Text>
+              <Text style={styles.viewLabelData}>
+                {formatDate({dateValue: date})}
+              </Text>
               <Text style={styles.viewLabel}>Symptoms</Text>
               <Text style={styles.viewLabelData}>{symptoms}</Text>
             </View>
@@ -214,7 +221,7 @@ const Form: FC<FormProps> = ({
 };
 
 const styles = StyleSheet.create({
-  viewContentInfo:{
+  viewContentInfo: {
     backgroundColor: '#FFF',
     borderRadius: 10,
     padding: 20,
@@ -236,10 +243,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textTransform: 'uppercase',
   },
-  btn:{
+  btn: {
     backgroundColor: '#5827A4',
   },
-  viewBtn:{
+  viewBtn: {
     backgroundColor: '#ff4400',
   },
   btnCancel: {

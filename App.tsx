@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   SafeAreaView,
   Text,
@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import Form from './src/components/Form';
 import PacientComponent from './src/components/PacientComponent';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export type Pacient = {
   id: string;
@@ -25,6 +26,48 @@ const App = (): JSX.Element => {
   const [isViewPacient, setIsViewPacient] = useState(false);
   const [pacients, setPacients] = useState<Pacient[]>([]);
   const [pacientToEdit, setPacientToEdit] = useState<Pacient>();
+
+  const handleOpenModal = () => {
+    setIsModalOpen(!isModalOpen);
+  };
+
+  const handleViewPacient = () => {
+    setIsViewPacient(!isViewPacient);
+    handleOpenModal();
+  };
+
+  const cleanPacientToEdit = () => {
+    setPacientToEdit(undefined);
+  };
+
+  const deletePacient = ({id}: {id: string}) => {
+    const newPacients = pacients.filter(pacient => pacient.id !== id);
+    setPacients(newPacients);
+    Alert.alert('Pacient has been deleted', '', [{text: 'Ok'}]);
+  };
+
+  const saveAppointments = async ({
+    appointments,
+  }: {
+    appointments: Pacient[];
+  }) => {
+    try {
+      await AsyncStorage.setItem('appointments', JSON.stringify(appointments));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getAppointmentsFromStorage = async () => {
+    try {
+      const resp = await AsyncStorage.getItem('appointments');
+      if (resp) {
+        setPacients(JSON.parse(resp));
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const handlePacients = ({
     newPacient,
@@ -49,25 +92,6 @@ const App = (): JSX.Element => {
       default:
         break;
     }
-  };
-
-  const handleOpenModal = () => {
-    setIsModalOpen(!isModalOpen);
-  };
-
-  const handleViewPacient = () => {
-    setIsViewPacient(!isViewPacient);
-    handleOpenModal();
-  };
-
-  const cleanPacientToEdit = () => {
-    setPacientToEdit(undefined);
-  };
-
-  const deletePacient = ({id}: {id: string}) => {
-    const newPacients = pacients.filter(pacient => pacient.id !== id);
-    setPacients(newPacients);
-    Alert.alert('Pacient has been deleted', '', [{text: 'Ok'}]);
   };
 
   const handlePacient = ({
@@ -105,6 +129,14 @@ const App = (): JSX.Element => {
         break;
     }
   };
+
+  useEffect(() => {
+    getAppointmentsFromStorage();
+  }, []);
+
+  useEffect(() => {
+    saveAppointments({appointments: pacients});
+  }, [pacients]);
 
   return (
     <SafeAreaView style={styles.container}>
